@@ -1,0 +1,31 @@
+{
+  "name": "tinynews-api",
+  "title": "Tinynews.com API Server",
+  "description": "API Server for Tinynews.com",
+  "keywords": [],
+  "version": "0.0.2",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "async": "~0.6.2",
+    "elasticsearch": "~2.2.0",
+    "grunt": "~0.4.4",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-karma": "~0.8.2",
+    "grunt-mocha-test": "~0.10.2",
+    "grunt-shell": "~0.6.4",
+    "karma": "~0.12.9",
+    "kue": "~0.7.8",
+    "mocha": "~1.18.2",
+    "redis": "^0.12.1",
+    "request": "~2.36.0",
+    "restify": "~2.7.0",
+    "should": "~3.2.0",
+    "tinynews-common": "git@github.com:mlightning/tinynews-common.git",
+    "validator": "~3.5.1"
+  }
+}

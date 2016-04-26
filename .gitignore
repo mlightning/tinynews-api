@@ -1,0 +1,13 @@
+.sass-cache
+npm-debug.log
+
+/logs
+/static
+/node_modules
+/bower_components
+/public/js/_models
+
+/config/*.*
+!/config/example.js
+
+.DS_Store
