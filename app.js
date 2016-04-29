@@ -64,11 +64,18 @@ if (Cluster.isMaster && Config.use_cluster) {
     // Controllers
     var UserController              = require('./controllers/user');
     var ArticleController           = require('./controllers/article');
+    var ArticleFactController       = require('./controllers/article_fact');
+    var ArticleStatementController  = require('./controllers/article_statement');
+    var PublisherController         = require('./controllers/publisher');
     var CommentController           = require('./controllers/comment');
     var JournalistController        = require('./controllers/journalist');
     var UserProfileController       = require('./controllers/userprofile');
+    var UserFeedSettingsController  = require('./controllers/userfeedsettings');
     var GroupController             = require('./controllers/group');
     var AuthController              = require('./controllers/auth');
+    var FeedController              = require('./controllers/feed');
+    var TagController               = require('./controllers/tag');
+    var SearchController            = require('./controllers/search');
 
     // -----------------
     //   Create Server
@@ -182,6 +189,21 @@ if (Cluster.isMaster && Config.use_cluster) {
     server.get({ path: '/user/:user_id/friends',            version: '1.0.0' },         UserController.ListFriends);
     server.post({ path: '/user/friend',                     version: '1.0.0' },         UserController.AddFriend);
 
+    /** Feed **/
+    server.get({ path: '/feeds',                            version: '1.0.0' },         FeedController.List);
+    server.post({ path: '/feed',                            version: '1.0.0' },         FeedController.Subscribe);
+    server.get({ path: '/feed/:feed_id',                    version: '1.0.0' },         FeedController.Retrieve);
+    server.del({ path: '/feed/:feed_id',                    version: '1.0.0' },         FeedController.Unsubscribe);
+    server.get({ path: '/feed/:feed_id/items',              version: '1.0.0' },         FeedController.GetFeedItems);
+
+    /** Tag **/
+    server.get({ path: '/tags',                             version: '1.0.0' },         TagController.List);
+    server.get({ path: '/tags/search',                      version: '1.0.0' },         TagController.Search);
+    server.get({ path: '/tag/:tag_id',                      version: '1.0.0' },         TagController.Retrieve);
+    server.put({ path: '/tag/:tag_id',                      version: '1.0.0' },         TagController.Update);
+    server.del({ path: '/tag/:tag_id',                      version: '1.0.0' },         TagController.Delete);
+    server.post({ path: '/tag',                             version: '1.0.0' },         TagController.Create);
+
     /** Article **/
     server.get({ path: '/articles',                         version: '1.0.0' },         ArticleController.List);
     server.get({ path: '/articles/featured',                version: '1.0.0' },         ArticleController.GetFeatured);
@@ -220,6 +242,19 @@ if (Cluster.isMaster && Config.use_cluster) {
     server.get({ path: '/journalists/recent',               version: '1.0.0' },         JournalistController.RecentlyRated);
     server.get({ path: '/journalists/friends',              version: '1.0.0' },         JournalistController.RecentlyRatedFriends);
     server.get({ path: '/journalists/toprated',             version: '1.0.0' },         JournalistController.TopRated);
+
+    /** Publisher **/
+    server.get({ path: '/publishers',                       version: '1.0.0' },         PublisherController.List);
+    server.get({ path: '/publishers/search',                version: '1.0.0' },         PublisherController.Search);
+    server.get({ path: '/publisher/:publisher_id',          version: '1.0.0' },         PublisherController.Retrieve);
+    server.put({ path: '/publisher/:publisher_id',          version: '1.0.0' },         PublisherController.Update);
+    server.del({ path: '/publisher/:publisher_id',          version: '1.0.0' },         PublisherController.Delete);
+    server.post({ path: '/publisher',                       version: '1.0.0' },         PublisherController.Create);
+
+    server.get({ path: '/publishers/mine',                  version: '1.0.0' },         PublisherController.MyPublishers);
+    server.get({ path: '/publishers/recent',                version: '1.0.0' },         PublisherController.RecentlyRated);
+    server.get({ path: '/publishers/friends',               version: '1.0.0' },         PublisherController.RecentlyRatedFriends);
+    server.get({ path: '/publishers/toprated',              version: '1.0.0' },         PublisherController.TopRated);
 
     /** UserProfile **/
     server.get({ path: '/user/:user_id/profile',            version: '1.0.0' },         UserProfileController.Retrieve);
@@ -275,19 +310,24 @@ if (Cluster.isMaster && Config.use_cluster) {
     server.get({ path: '/search',                                   version: '1.0.0' },        SearchController.GlobalSearch);
 
     /** Comments **/
+    server.post({ path: '/publisher/:owner_id/comment',            version: '1.0.0' },         CommentController.Create);
     server.post({ path: '/journalist/:owner_id/comment',           version: '1.0.0' },         CommentController.Create);
     server.post({ path: '/article/:owner_id/comment',              version: '1.0.0' },         CommentController.Create);
 
+    server.post({ path: '/publisher/:owner_id/comment/:comment_id',    version: '1.0.0' },     CommentController.Create);
     server.post({ path: '/journalist/:owner_id/comment/:comment_id',   version: '1.0.0' },     CommentController.Create);
     server.post({ path: '/article/:owner_id/comment/:comment_id',      version: '1.0.0' },     CommentController.Create);
 
+    server.get({ path: '/publisher/:publisher_id/comment',             version: '1.0.0' },     CommentController.PublisherComments);
     server.get({ path: '/journalist/:journalist_id/comment',           version: '1.0.0' },     CommentController.JournalistComments);
     server.get({ path: '/article/:article_id/comment',                 version: '1.0.0' },     CommentController.ArticleComments);
 
     server.del({ path: '/journalist/:owner_id/comment/:comment_id',     version: '1.0.0' },     CommentController.Delete);
+    server.del({ path: '/publisher/:owner_id/comment/:comment_id',      version: '1.0.0' },     CommentController.Delete);
     server.del({ path: '/article/:owner_id/comment/:comment_id',        version: '1.0.0' },     CommentController.Delete);
 
     server.put({ path: '/journalist/:owner_id/comment/:comment_id',     version: '1.0.0' },     CommentController.Update);
+    server.put({ path: '/publisher/:owner_id/comment/:comment_id',      version: '1.0.0' },     CommentController.Update);
     server.put({ path: '/article/:owner_id/comment/:comment_id',        version: '1.0.0' },     CommentController.Update);
 
     server.post({ path: '/comment/:comment_id/vote/:vote',              version: '1.0.0' },     CommentController.CommentVote);
